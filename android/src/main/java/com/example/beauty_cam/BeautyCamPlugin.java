@@ -33,6 +33,14 @@ public class BeautyCamPlugin implements FlutterPlugin, MethodCallHandler {
       case "updateFilter":
 
         break;
+        //添加滤镜
+      case "addFilter":
+
+        break;
+        //获取滤镜列表
+      case "getFilterList":
+
+        break;
       //开启或关闭美颜
       case "enableBeauty":
 

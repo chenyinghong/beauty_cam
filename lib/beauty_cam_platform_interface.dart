@@ -23,27 +23,33 @@ abstract class BeautyCamPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
-
   ///切换镜头
-  Future<String?> switchCamera() {
+  Future<void> switchCamera() {
     throw UnimplementedError('switchCamera() has not been implemented.');
   }
 
   ///切换滤镜
-  Future<String?> updateFilter() {
+  Future<void> updateFilter(int filter) {
+    throw UnimplementedError('updateFilter() has not been implemented.');
+  }
+
+  ///获取滤镜列表
+  Future<List> getFilterList() {
+    throw UnimplementedError('updateFilter() has not been implemented.');
+  }
+
+  ///添加滤镜
+  Future<void> addFilter(String filter) {
     throw UnimplementedError('updateFilter() has not been implemented.');
   }
 
   ///开启或关闭美颜
-  Future<String?> enableBeauty() {
+  Future<void> enableBeauty(bool isEnableBeauty) {
     throw UnimplementedError('enableBeauty() has not been implemented.');
   }
 
   ///美颜程度（0~1）
-  Future<String?> setBeautyLevel() {
+  Future<void> setBeautyLevel(double level) {
     throw UnimplementedError('setBeautyLevel() has not been implemented.');
   }
 
@@ -58,7 +64,7 @@ abstract class BeautyCamPlatform extends PlatformInterface {
   }
 
   ///设置文件保存路径
-  Future<String?> setOuputMP4File() {
+  Future<String?> setOuputMP4File(String path) {
     throw UnimplementedError('setOuputMP4File() has not been implemented.');
   }
 }
