@@ -26,4 +26,39 @@ abstract class BeautyCamPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  ///切换镜头
+  Future<String?> switchCamera() {
+    throw UnimplementedError('switchCamera() has not been implemented.');
+  }
+
+  ///切换滤镜
+  Future<String?> updateFilter() {
+    throw UnimplementedError('updateFilter() has not been implemented.');
+  }
+
+  ///开启或关闭美颜
+  Future<String?> enableBeauty() {
+    throw UnimplementedError('enableBeauty() has not been implemented.');
+  }
+
+  ///美颜程度（0~1）
+  Future<String?> setBeautyLevel() {
+    throw UnimplementedError('setBeautyLevel() has not been implemented.');
+  }
+
+  ///拍照
+  Future<String?> takePicture() {
+    throw UnimplementedError('takePicture() has not been implemented.');
+  }
+
+  ///拍视频
+  Future<String?> takeVideo() {
+    throw UnimplementedError('takeVideo() has not been implemented.');
+  }
+
+  ///设置文件保存路径
+  Future<String?> setOuputMP4File() {
+    throw UnimplementedError('setOuputMP4File() has not been implemented.');
+  }
 }

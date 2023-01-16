@@ -24,10 +24,38 @@ public class BeautyCamPlugin implements FlutterPlugin, MethodCallHandler {
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else {
-      result.notImplemented();
+    switch (call.method) {
+      //切换镜头
+      case "switchCamera":
+
+        break;
+        //切换滤镜
+      case "updateFilter":
+
+        break;
+      //开启或关闭美颜
+      case "enableBeauty":
+
+        break;
+      //美颜程度（0~1）
+      case "setBeautyLevel":
+
+        break;
+        //拍照
+      case "takePicture":
+
+        break;
+        //录制视频
+      case "takeVideo":
+
+        break;
+        //设置文件保存路径
+      case "setOuputMP4File":
+
+        break;
+      default:
+
+        break;
     }
   }
 
