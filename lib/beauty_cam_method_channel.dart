@@ -24,14 +24,14 @@ class MethodChannelBeautyCam extends BeautyCamPlatform {
 
   ///切换滤镜
   @override
-  Future<void> updateFilter(int filter) {
+  Future<void> updateFilter(String filter) {
     // TODO: implement updateFilter
     return super.updateFilter(filter);
   }
 
   ///获取滤镜列表
   @override
-  Future<List> getFilterList() {
+  Future<List<String>> getFilterList() {
     // TODO: implement getFilterList
     return super.getFilterList();
   }

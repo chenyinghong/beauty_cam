@@ -11,12 +11,12 @@ class BeautyCam {
   }
 
   ///切换滤镜
-  Future<void> updateFilter(int filter) {
+  Future<void> updateFilter(String filter) {
     return BeautyCamPlatform.instance.updateFilter(filter);
   }
 
   ///获取滤镜列表
-  Future<List> getFilterList() {
+  Future<List<String>> getFilterList() {
     return BeautyCamPlatform.instance.getFilterList();
   }
 
