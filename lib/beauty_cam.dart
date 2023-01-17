@@ -1,5 +1,7 @@
 import 'beauty_cam_platform_interface.dart';
 
+typedef BeautyCamCallback = void Function(BeautyCam controller);
+
 class BeautyCam {
   // Future<String?> getPlatformVersion() {
   //   return BeautyCamPlatform.instance.getPlatformVersion();

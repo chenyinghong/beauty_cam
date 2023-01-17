@@ -59,9 +59,9 @@ class MethodChannelBeautyCam extends BeautyCamPlatform {
 
   ///拍照
   @override
-  Future<String?> takePicture() {
-    // TODO: implement takePicture
-    return super.takePicture();
+  Future<String?> takePicture() async {
+    final takePicture = await methodChannel.invokeMethod<String>('takePicture');
+    return takePicture;
   }
 
   ///拍视频
