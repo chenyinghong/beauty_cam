@@ -14,6 +14,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ///定义一个测试类的属性 用来调用原生方法 和原生交互
   BeautyCam? cameraFlutterPluginDemo; // 定一个插件的对象，
+  bool isEnableBeauty = true;
   @override
   void initState() {
     super.initState();
@@ -30,20 +31,48 @@ class _MyAppState extends State<MyApp> {
           appBar: AppBar(
             title: const Text('Plugin example app'),
           ),
-          body: Column(
+          body: Stack(
+            alignment: Alignment.bottomCenter,
             children: <Widget>[
-              Container(
-                height: 500,
-                width: double.infinity,
+              AspectRatio(
+                aspectRatio: 9 / 16,
                 child: cameraView,
 
                 ///使用原生视图
               ),
-              FloatingActionButton(
-                ///添加一个按钮 用来触发原生调用
-                onPressed: onNativeMethon,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ///添加按钮 用来触发原生调用
+                  IconButton(
+                    onPressed: () {
+                      cameraFlutterPluginDemo?.enableBeauty(isEnableBeauty);
 
-                ///点击方法里面调用原生
+                      setState(() {
+                        isEnableBeauty = !isEnableBeauty;
+                      });
+                    },
+                    icon: Icon(isEnableBeauty
+                        ? Icons.face
+                        : Icons.face_retouching_off,color: Colors.white,),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cameraFlutterPluginDemo?.updateFilter("isEnableBeauty");
+
+                      setState(() {
+                        isEnableBeauty = !isEnableBeauty;
+                      });
+                    },
+                    icon: Icon(Icons.change_history,color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cameraFlutterPluginDemo?.switchCamera();
+                    },
+                    icon: Icon(Icons.switch_camera,color: Colors.white),
+                  )
+                ],
               )
             ],
           )),
@@ -52,10 +81,5 @@ class _MyAppState extends State<MyApp> {
 
   void onCameraViewCreated(cameraFlutterPluginDemo) {
     this.cameraFlutterPluginDemo = cameraFlutterPluginDemo;
-  }
-
-  /// 调用原生
-  void onNativeMethon() {
-    cameraFlutterPluginDemo?.takePicture();
   }
 }

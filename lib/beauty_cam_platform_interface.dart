@@ -34,7 +34,7 @@ abstract class BeautyCamPlatform extends PlatformInterface {
   }
 
   ///获取滤镜列表
-  Future<List<String>> getFilterList() {
+  Future<List<String>?> getFilterList() {
     throw UnimplementedError('updateFilter() has not been implemented.');
   }
 
@@ -49,7 +49,8 @@ abstract class BeautyCamPlatform extends PlatformInterface {
   }
 
   ///美颜程度（0~1）
-  Future<void> setBeautyLevel(double level) {
+  Future<void> setBeautyLevel(double level) async {
+    assert(level <= 1.0);
     throw UnimplementedError('setBeautyLevel() has not been implemented.');
   }
 

@@ -6,6 +6,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+
     }
 
     dependencies {
@@ -17,6 +18,7 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://www.jitpack.io' }
     }
 }
 
@@ -31,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 22
     }
 
 }
@@ -52,4 +54,5 @@ if (flutterRoot == null) {
 dependencies {
     compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
     compileOnly 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.github.moo611:OpenCamera:1.0.6'
 }

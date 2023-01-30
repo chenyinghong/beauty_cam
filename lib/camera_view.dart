@@ -45,7 +45,7 @@ class _CameraViewState extends State<CameraView> {
     } else if (Platform.isIOS) {
       ///加载iOS原生视图
       return UiKitView(
-        viewType: 'testView',
+        viewType: 'beauty_cam',
 
         ///视图标识符 要和原生 保持一致 要不然加载不到视图
         onPlatformViewCreated: onPlatformViewCreated,
