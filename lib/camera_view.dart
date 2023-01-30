@@ -35,7 +35,6 @@ class _CameraViewState extends State<CameraView> {
         ///原生视图创建成功的回调
         creationParams: const <String, dynamic>{
           ///给原生传递初始化参数 就是上面定义的初始化参数
-          'titleStr': '666',
         },
 
         /// 用来编码 creationParams 的形式，可选 [StandardMessageCodec], [JSONMessageCodec], [StringCodec], or [BinaryCodec]

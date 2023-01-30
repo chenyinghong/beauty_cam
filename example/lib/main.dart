@@ -7,6 +7,8 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -34,12 +36,7 @@ class _MyAppState extends State<MyApp> {
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
-              AspectRatio(
-                aspectRatio: 9 / 16,
-                child: cameraView,
-
-                ///使用原生视图
-              ),
+              cameraView,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -52,9 +49,10 @@ class _MyAppState extends State<MyApp> {
                         isEnableBeauty = !isEnableBeauty;
                       });
                     },
-                    icon: Icon(isEnableBeauty
-                        ? Icons.face
-                        : Icons.face_retouching_off,color: Colors.white,),
+                    icon: Icon(
+                      isEnableBeauty ? Icons.face : Icons.face_retouching_off,
+                      color: Colors.white,
+                    ),
                   ),
                   IconButton(
                     onPressed: () {
@@ -64,13 +62,13 @@ class _MyAppState extends State<MyApp> {
                         isEnableBeauty = !isEnableBeauty;
                       });
                     },
-                    icon: Icon(Icons.change_history,color: Colors.white),
+                    icon: const Icon(Icons.change_history, color: Colors.white),
                   ),
                   IconButton(
                     onPressed: () {
                       cameraFlutterPluginDemo?.switchCamera();
                     },
-                    icon: Icon(Icons.switch_camera,color: Colors.white),
+                    icon: const Icon(Icons.switch_camera, color: Colors.white),
                   )
                 ],
               )
