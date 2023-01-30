@@ -4,9 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.provider.CalendarContract;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.AttributeSet;
+import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,25 +17,31 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
 
-public class CameraFlutterPluginView extends TextView implements PlatformView, MethodChannel.MethodCallHandler, TextureView.SurfaceTextureListener{
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+public class CameraFlutterPluginView extends SurfaceView implements PlatformView, MethodChannel.MethodCallHandler, SurfaceHolder.Callback {
+
+    private static final String TAG = CameraFlutterPluginView.class.getSimpleName();
+
+    private SurfaceHolder mSurfaceHolder;
+
+    private void init() {
+        mSurfaceHolder = getHolder();
+        mSurfaceHolder.addCallback(this);
 
     }
 
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+    public void surfaceCreated(SurfaceHolder holder) {
+        CameraUtils.openFrontalCamera(CameraUtils.DESIRED_PREVIEW_FPS);
     }
 
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return false;
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        CameraUtils.startPreviewDisplay(holder);
     }
 
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        CameraUtils.releaseCamera();
     }
 
     public  Context context;
@@ -48,8 +53,9 @@ public class CameraFlutterPluginView extends TextView implements PlatformView, M
     public CameraFlutterPluginView(Context context, int viewId, Object args, BinaryMessenger messenger) {
         super(context);
         this.context = context;
-        setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        setBackgroundColor(Color.argb(255,100,79,79));  //0完全透明  255不透明
+        init();
+//        setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        setBackgroundColor(Color.argb(255,100,79,79));  //0完全透明  255不透明
         //注册
         methodChannel = new MethodChannel(messenger, "beauty_cam");
         methodChannel.setMethodCallHandler(this);
