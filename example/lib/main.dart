@@ -56,11 +56,12 @@ class _MyAppState extends State<MyApp> {
                   ),
                   IconButton(
                     onPressed: () {
-                      cameraFlutterPluginDemo?.updateFilter("isEnableBeauty");
-
-                      setState(() {
-                        isEnableBeauty = !isEnableBeauty;
-                      });
+                      // cameraFlutterPluginDemo?.updateFilter("isEnableBeauty");
+                      //
+                      // setState(() {
+                      //   isEnableBeauty = !isEnableBeauty;
+                      // });
+                      cameraFlutterPluginDemo?.takePicture();
                     },
                     icon: const Icon(Icons.change_history, color: Colors.white),
                   ),

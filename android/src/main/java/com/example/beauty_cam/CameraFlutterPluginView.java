@@ -3,20 +3,14 @@ package com.example.beauty_cam;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.SurfaceTexture;
 import android.net.Uri;
-import android.provider.CalendarContract;
-import android.util.AttributeSet;
-import android.view.*;
-import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import com.aglframework.smzh.AGLView;
-import com.aglframework.smzh.camera.AGLCamera;
-import com.aglframework.smzh.filter.SmoothFilter;
+import com.example.beauty_cam.glcamera.interfaces.FilteredBitmapCallback;
+import com.example.beauty_cam.glcamera.utils.FileUtils;
+import com.example.beauty_cam.glcamera.utils.FilterFactory;
+import com.example.beauty_cam.glcamera.views.GLCameraView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -25,9 +19,7 @@ import io.flutter.plugin.platform.PlatformView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Objects;
-
-
-public class CameraFlutterPluginView extends AGLView implements PlatformView, MethodChannel.MethodCallHandler{
+public class CameraFlutterPluginView extends GLCameraView implements PlatformView, MethodChannel.MethodCallHandler{
 
     private static final String TAG = CameraFlutterPluginView.class.getSimpleName();
     public  Context context;
@@ -35,17 +27,13 @@ public class CameraFlutterPluginView extends AGLView implements PlatformView, Me
      * 通道
      */
     private  MethodChannel methodChannel = null;
-    private AGLCamera aglCamera;
+
     public CameraFlutterPluginView(Context context, int viewId, Object args, BinaryMessenger messenger) {
         super(context);
         this.context = context;
-        aglCamera = new AGLCamera(this, 1080, 1920);
-        aglCamera.open();
         //注册
         methodChannel = new MethodChannel(messenger, "beauty_cam");
         methodChannel.setMethodCallHandler(this);
-
-
     }
 
     @Override
@@ -58,12 +46,12 @@ public class CameraFlutterPluginView extends AGLView implements PlatformView, Me
         switch (methodCall.method) {
             //切换镜头
             case "switchCamera":
-                aglCamera.switchCamera();
+                this.switchCamera();
                 break;
             //切换滤镜
             case "updateFilter":
                 //TODO:切换滤镜
-//               this.updateFilter(FilterFactory.FilterType.Amaro);
+                this.updateFilter(FilterFactory.FilterType.Amaro);
                 break;
             //添加滤镜
             case "addFilter":
@@ -76,51 +64,44 @@ public class CameraFlutterPluginView extends AGLView implements PlatformView, Me
                 break;
             //开启或关闭美颜
             case "enableBeauty":
-                SmoothFilter smoothFilter = new SmoothFilter(context);
-                if(methodCall.argument("isEnableBeauty")){
-                    smoothFilter.setSmoothLevel(0.88f);
-                }else{
-                    smoothFilter.setSmoothLevel(0);
-                }
-                this.setFilter(smoothFilter);
-//                this.enableBeauty(methodCall.argument("isEnableBeauty"));
+                this.enableBeauty(methodCall.argument("isEnableBeauty"));
                 break;
             //美颜程度（0~1）
             case "setBeautyLevel":
                 final float level = Float.parseFloat(Objects.requireNonNull(methodCall.argument("level")).toString());
                 Toast.makeText(context, methodCall.method+"=="+level, Toast.LENGTH_SHORT).show();
-//               this.setBeautyLevel(level);
+                this.setBeautyLevel(level);
                 break;
             //拍照
             case "takePicture":
-//                this.takePicture(new FilteredBitmapCallback() {
-//                    @Override
-//                    public void onData(Bitmap bitmap) {
-//
-//                        File file = FileUtils.createImageFile();
-//                        //重新写入文件
-//                        try {
-//                            // 写入文件
-//                            FileOutputStream fos;
-//                            fos = new FileOutputStream(file);
-//                            //默认jpg
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-//                            fos.flush();
-//                            fos.close();
-//                            bitmap.recycle();
-//
-//                            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-//                                    Uri.fromFile(file)));
-//
-//                            Toast.makeText(context, file.getPath(), Toast.LENGTH_SHORT).show();
-//
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//
-//
-//                    }
-//                });
+                this.takePicture(new FilteredBitmapCallback() {
+                    @Override
+                    public void onData(Bitmap bitmap) {
+
+                        File file = FileUtils.createImageFile();
+                        //重新写入文件
+                        try {
+                            // 写入文件
+                            FileOutputStream fos;
+                            fos = new FileOutputStream(file);
+                            //默认jpg
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                            fos.flush();
+                            fos.close();
+                            bitmap.recycle();
+
+                            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                    Uri.fromFile(file)));
+
+                            Toast.makeText(context, "takePicture", Toast.LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                });
 
                 break;
             //录制视频
@@ -144,6 +125,6 @@ public class CameraFlutterPluginView extends AGLView implements PlatformView, Me
 
     @Override
     public void dispose() {
-        aglCamera.close();
+
     }
 }
