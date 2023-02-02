@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'beauty_cam.dart';
 
@@ -15,30 +14,10 @@ class CameraView extends StatefulWidget {
 }
 
 class _CameraViewState extends State<CameraView> {
-  bool havePermission = false;
-  checkPermission() async {
-    if (await Permission.camera.status.isDenied) {
-      Permission.camera.request();
-      setState(() {
-        havePermission = true;
-      });
-    }
-    if (await Permission.storage.status.isDenied) {
-      Permission.storage.request();
-    }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    checkPermission();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: havePermission ? _loadNativeView() : null,
+      child: _loadNativeView(),
     );
   }
 
