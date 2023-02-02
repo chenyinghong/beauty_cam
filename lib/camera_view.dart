@@ -18,7 +18,7 @@ class _CameraViewState extends State<CameraView> {
   Widget build(BuildContext context) {
     return AnimatedOpacity(
       opacity: 1.0,
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 2000),
       child: _loadNativeView(),
     );
   }
