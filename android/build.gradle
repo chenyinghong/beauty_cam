@@ -55,4 +55,5 @@ dependencies {
     compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
     compileOnly 'androidx.annotation:annotation:1.1.0'
     implementation 'com.gitee.MaoJiuXianSen:android_photo_video_beauty:v1.6'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha03'
 }

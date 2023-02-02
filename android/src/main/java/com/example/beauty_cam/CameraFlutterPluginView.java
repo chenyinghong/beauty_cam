@@ -4,21 +4,22 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import com.atech.glcamera.interfaces.FileCallback;
 import com.atech.glcamera.interfaces.FilteredBitmapCallback;
 import com.atech.glcamera.utils.FileUtils;
-import com.atech.glcamera.utils.FilterFactory;
 import com.atech.glcamera.views.GLCameraView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -27,8 +28,6 @@ import io.flutter.plugin.platform.PlatformView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Objects;
-
-import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
 
 public class CameraFlutterPluginView extends GLCameraView implements PlatformView, MethodChannel.MethodCallHandler{
 
@@ -50,30 +49,6 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
     }
 
 
-    String[] permissions = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-    //点击按钮，访问如下方法
-    private void checkPermissions(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int i = ContextCompat.checkSelfPermission(getContext(), permissions[0]);
-            int l = ContextCompat.checkSelfPermission(getContext(), permissions[1]);
-            int m = ContextCompat.checkSelfPermission(getContext(), permissions[2]);
-            // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
-            if (i != PackageManager.PERMISSION_GRANTED ||
-                    l != PackageManager.PERMISSION_GRANTED ||
-                    m != PackageManager.PERMISSION_GRANTED) {
-                // 如果没有授予该权限，就去提示用户请求
-                startRequestPermission();
-            }
-        }
-    }
-    private void startRequestPermission() {
-
-//        ActivityCompat.requestPermissions(context, permissions, 321);
-    }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -113,33 +88,32 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 break;
             //拍照
             case "takePicture":
-                this.takePicture(new FilteredBitmapCallback() {
-                    @Override
-                    public void onData(Bitmap bitmap) {
-
-                        File file = FileUtils.createImageFile();
-                        //重新写入文件
-                        try {
-                            // 写入文件
-                            FileOutputStream fos;
-                            fos = new FileOutputStream(file);
-                            //默认jpg
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                            fos.flush();
-                            fos.close();
-                            bitmap.recycle();
-
-                            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                                    Uri.fromFile(file)));
-
-                            result.success(file.getAbsoluteFile());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                this.takePicture(bitmap -> {
 
 
+                    File file = FileUtils.createImageFile();
+
+                    //重新写入文件
+                    try {
+                        // 写入文件
+                        FileOutputStream fos;
+                        fos = new FileOutputStream(file);
+                        //默认jpg
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+                        fos.flush();
+                        fos.close();
+                        bitmap.recycle();
+                        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                Uri.fromFile(file)));
+                        String path=file.getAbsoluteFile().toString();
+                        result.success(path);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
+
                 });
 
                 break;
@@ -161,7 +135,8 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                     //update the gallery
                     context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                             Uri.fromFile(file)));
-                    result.success(file.getAbsoluteFile());
+                    String path=file.getAbsoluteFile().toString();
+                    result.success(path);
                 });
                 break;
             //设置文件保存路径
@@ -175,6 +150,43 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 break;
         }
     }
+
+    String[] permissions = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private void checkPermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int i = ContextCompat.checkSelfPermission(getContext(), permissions[0]);
+            int l = ContextCompat.checkSelfPermission(getContext(), permissions[1]);
+            int m = ContextCompat.checkSelfPermission(getContext(), permissions[2]);
+            // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
+            if (i != PackageManager.PERMISSION_GRANTED ||
+                    l != PackageManager.PERMISSION_GRANTED ||
+                    m != PackageManager.PERMISSION_GRANTED) {
+                // 如果没有授予该权限，就去提示用户请求
+                startRequestPermission();
+            }
+        }
+    }
+    private void startRequestPermission() {
+        ActivityCompat.requestPermissions(getActivityFromView(this), permissions, 321);
+    }
+
+    public static Activity getActivityFromView(View view) {
+        if (null != view) {
+            Context context = view.getContext();
+            while (context instanceof ContextWrapper) {
+                if (context instanceof Activity) {
+                    return (Activity) context;
+                }
+                context = ((ContextWrapper) context).getBaseContext();
+            }
+        }
+        return null;
+    }
+
 //    private void initFilters(){
 //
 //

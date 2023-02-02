@@ -19,7 +19,10 @@ class _CameraViewState extends State<CameraView> {
     return AnimatedOpacity(
       opacity: 1.0,
       duration: const Duration(milliseconds: 2000),
-      child: _loadNativeView(),
+      child: Container(
+        color: Colors.black,
+        child: _loadNativeView(),
+      ),
     );
   }
 
