@@ -119,29 +119,21 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 break;
             //录制视频
             case "takeVideo":
-                //TODO：录制视频
                 changeRecordingState(true);
-//                this.setrecordFinishedListnener(file -> {
-//                    //update the gallery
-//                    context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-//                            Uri.fromFile(file)));
-//
-//                });
                 break;
             case "stopVideo":
-                //TODO：录制视频
                 changeRecordingState(false);
                 this.setrecordFinishedListnener(file -> {
                     //update the gallery
                     context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                             Uri.fromFile(file)));
                     String path=file.getAbsoluteFile().toString();
+//                    Toast.makeText(context, path, Toast.LENGTH_SHORT).show();
                     result.success(path);
                 });
                 break;
             //设置文件保存路径
             case "setOuputMP4File":
-
                 String path=methodCall.argument("path");
                 this.setOuputMP4File(new File(path));
                 break;
