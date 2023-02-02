@@ -1,0 +1,48 @@
+<resources>
+
+
+    <!-- DrawImageActivity(draw_image) -->
+
+
+    <!-- CameraActivity(camera) -->
+
+
+    <!-- Camera2Activity(camera2) -->
+
+
+    <!-- AudioActivity(audio) -->
+
+
+    <!-- OpenSLActivity(opensl) -->
+
+
+    <!-- HWCodecActivity(hwcodec) -->
+
+
+    <!-- OpenGLActivity(opengl) -->
+
+
+    <!-- JavaTriangleActivityvity(jvtri) -->
+
+
+    <!-- MatrixTransform(mxtsf) -->
+
+
+    <!-- TextureImageActivity(tex) -->
+
+
+    <!-- GLCameraActivity(glcam) -->
+
+
+    <!-- WatermarkActivity(wtmar) -->
+
+
+    <!-- BeautyActivity(beauty) -->
+
+
+    <!-- VideoPalyActivity(vplay) -->
+
+
+    <!-- FFmepgActivity(ff) -->
+
+</resources>

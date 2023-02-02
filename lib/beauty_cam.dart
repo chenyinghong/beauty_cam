@@ -42,9 +42,14 @@ class BeautyCam {
     return BeautyCamPlatform.instance.takePicture();
   }
 
-  ///拍视频
-  Future<String?> takeVideo() {
+  ///开始拍视频
+  Future<void> takeVideo() {
     return BeautyCamPlatform.instance.takeVideo();
+  }
+
+  ///结束拍摄视频
+  Future<String?> stopVideo() {
+    return BeautyCamPlatform.instance.stopVideo();
   }
 
   ///设置文件保存路径
