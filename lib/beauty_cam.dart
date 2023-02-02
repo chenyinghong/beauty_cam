@@ -3,10 +3,6 @@ import 'beauty_cam_platform_interface.dart';
 typedef BeautyCamCallback = void Function(BeautyCam controller);
 
 class BeautyCam {
-  // Future<String?> getPlatformVersion() {
-  //   return BeautyCamPlatform.instance.getPlatformVersion();
-  // }
-
   ///切换镜头
   Future<void> switchCamera() {
     return BeautyCamPlatform.instance.switchCamera();
