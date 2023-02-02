@@ -1,12 +1,16 @@
 package com.example.beauty_cam;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import com.atech.glcamera.interfaces.FileCallback;
 import com.atech.glcamera.interfaces.FilteredBitmapCallback;
 import com.atech.glcamera.utils.FileUtils;
 import com.atech.glcamera.utils.FilterFactory;
@@ -15,9 +19,10 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
-
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 public class CameraFlutterPluginView extends GLCameraView implements PlatformView, MethodChannel.MethodCallHandler{
 
@@ -26,8 +31,9 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
     /**
      * 通道
      */
-    private  MethodChannel methodChannel = null;
-
+    private  MethodChannel methodChannel = null;// controls button state//1.capture 2.record
+//    private List<FilterFactory.FilterType> filters = new ArrayList<>();
+//    private List<FilterInfo>infos = new ArrayList<>();
     public CameraFlutterPluginView(Context context, int viewId, Object args, BinaryMessenger messenger) {
         super(context);
         this.context = context;
@@ -35,6 +41,8 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
         methodChannel = new MethodChannel(messenger, "beauty_cam");
         methodChannel.setMethodCallHandler(this);
     }
+
+
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -51,7 +59,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
             //切换滤镜
             case "updateFilter":
                 //TODO:切换滤镜
-                this.updateFilter(FilterFactory.FilterType.Amaro);
+//                this.updateFilter(FilterFactory.FilterType.Amaro);
                 break;
             //添加滤镜
             case "addFilter":
@@ -93,7 +101,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                                     Uri.fromFile(file)));
 
-                            Toast.makeText(context, "takePicture", Toast.LENGTH_SHORT).show();
+                            result.success(file.getAbsoluteFile());
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -107,17 +115,93 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
             //录制视频
             case "takeVideo":
                 //TODO：录制视频
+                changeRecordingState(true);
+//                this.setrecordFinishedListnener(file -> {
+//                    //update the gallery
+//                    context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                            Uri.fromFile(file)));
+//
+//                });
+                break;
+            case "stopVideo":
+                //TODO：录制视频
+                changeRecordingState(false);
+                this.setrecordFinishedListnener(file -> {
+                    //update the gallery
+                    context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                            Uri.fromFile(file)));
+                    result.success(file.getAbsoluteFile());
+                });
                 break;
             //设置文件保存路径
             case "setOuputMP4File":
                 //TODO：设置文件保存路径
+                String path=methodCall.argument("path");
+                this.setOuputMP4File(new File(path));
                 break;
             default:
 
                 break;
         }
     }
-
+//    private void initFilters(){
+//
+//
+//        filters.add(FilterFactory.FilterType.Original);
+//        filters.add(FilterFactory.FilterType.Sunrise);
+//        filters.add(FilterFactory.FilterType.Sunset);
+//        filters.add(FilterFactory.FilterType.BlackWhite);
+//        filters.add(FilterFactory.FilterType.WhiteCat);
+//        filters.add(FilterFactory.FilterType.BlackCat);
+//        filters.add(FilterFactory.FilterType.SkinWhiten);
+//        filters.add(FilterFactory.FilterType.Healthy);
+//        filters.add(FilterFactory.FilterType.Sakura);
+//        filters.add(FilterFactory.FilterType.Romance);
+//        filters.add(FilterFactory.FilterType.Latte);
+//        filters.add(FilterFactory.FilterType.Warm);
+//        filters.add(FilterFactory.FilterType.Calm);
+//        filters.add(FilterFactory.FilterType.Cool);
+//        filters.add(FilterFactory.FilterType.Brooklyn);
+//        filters.add(FilterFactory.FilterType.Sweets);
+//        filters.add(FilterFactory.FilterType.Amaro);
+//        filters.add(FilterFactory.FilterType.Antique);
+//        filters.add(FilterFactory.FilterType.Brannan);
+//
+//
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_original,"原图"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_sunrise,"日出"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_sunset,"日落"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_1977,"黑白"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_whitecat,"白猫"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_blackcat,"黑猫"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_beauty,"美白"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_healthy,"健康"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_sakura,"樱花"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_romance,"浪漫"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_latte,"拿铁"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_warm,"温暖"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_calm,"安静"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_cool,"寒冷"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_brooklyn,"纽约"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_sweets,"甜品"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_amoro,"Amaro"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_antique,"复古"));
+//        infos.add(new FilterInfo(R.drawable.filter_thumb_brannan,"Brannan"));
+//
+//        //set your own output file here
+//        // mCameraView.setOuputMP4File();
+//        //set record finish listener
+//        mCameraView.setrecordFinishedListnener(new FileCallback() {
+//            @Override
+//            public void onData(File file) {
+//
+//                //update the gallery
+//                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                        Uri.fromFile(file)));
+//
+//            }
+//        });
+//    }
     @Override
     public View getView() {
         return this;

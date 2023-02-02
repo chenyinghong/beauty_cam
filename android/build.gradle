@@ -54,5 +54,5 @@ if (flutterRoot == null) {
 dependencies {
     compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
     compileOnly 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.gitee.MaoJiuXianSen:android---photo-video-beauty:v1.5'
+    implementation 'com.gitee.MaoJiuXianSen:android_photo_video_beauty:v1.6'
 }

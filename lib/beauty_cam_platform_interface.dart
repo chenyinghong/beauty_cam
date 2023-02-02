@@ -59,9 +59,14 @@ abstract class BeautyCamPlatform extends PlatformInterface {
     throw UnimplementedError('takePicture() has not been implemented.');
   }
 
-  ///拍视频
-  Future<String?> takeVideo() {
+  ///开始拍视频
+  Future<void> takeVideo() {
     throw UnimplementedError('takeVideo() has not been implemented.');
+  }
+
+  ///结束拍视频
+  Future<String?> stopVideo() {
+    throw UnimplementedError('stopVideo() has not been implemented.');
   }
 
   ///设置文件保存路径

@@ -64,10 +64,16 @@ class MethodChannelBeautyCam extends BeautyCamPlatform {
     return methodChannel.invokeMethod<String>('takePicture');
   }
 
-  ///拍视频
+  ///开始拍视频
   @override
-  Future<String?> takeVideo() {
-    return methodChannel.invokeMethod<String>('takeVideo');
+  Future<void> takeVideo() {
+    return methodChannel.invokeMethod('takeVideo');
+  }
+
+  ///结束拍视频
+  @override
+  Future<String?> stopVideo() {
+    return methodChannel.invokeMethod<String>('stopVideo');
   }
 
   ///设置文件保存路径
