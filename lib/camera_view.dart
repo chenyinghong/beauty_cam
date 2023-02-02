@@ -16,7 +16,9 @@ class CameraView extends StatefulWidget {
 class _CameraViewState extends State<CameraView> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedOpacity(
+      opacity: 1.0,
+      duration: const Duration(milliseconds: 1000),
       child: _loadNativeView(),
     );
   }
