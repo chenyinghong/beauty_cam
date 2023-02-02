@@ -1,15 +1,20 @@
 package com.example.beauty_cam;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.atech.glcamera.interfaces.FileCallback;
 import com.atech.glcamera.interfaces.FilteredBitmapCallback;
 import com.atech.glcamera.utils.FileUtils;
@@ -21,9 +26,10 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+
+import static androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale;
+
 public class CameraFlutterPluginView extends GLCameraView implements PlatformView, MethodChannel.MethodCallHandler{
 
     private static final String TAG = CameraFlutterPluginView.class.getSimpleName();
@@ -37,12 +43,37 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
     public CameraFlutterPluginView(Context context, int viewId, Object args, BinaryMessenger messenger) {
         super(context);
         this.context = context;
+        checkPermissions();
         //注册
         methodChannel = new MethodChannel(messenger, "beauty_cam");
         methodChannel.setMethodCallHandler(this);
     }
 
 
+    String[] permissions = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    //点击按钮，访问如下方法
+    private void checkPermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int i = ContextCompat.checkSelfPermission(getContext(), permissions[0]);
+            int l = ContextCompat.checkSelfPermission(getContext(), permissions[1]);
+            int m = ContextCompat.checkSelfPermission(getContext(), permissions[2]);
+            // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
+            if (i != PackageManager.PERMISSION_GRANTED ||
+                    l != PackageManager.PERMISSION_GRANTED ||
+                    m != PackageManager.PERMISSION_GRANTED) {
+                // 如果没有授予该权限，就去提示用户请求
+                startRequestPermission();
+            }
+        }
+    }
+    private void startRequestPermission() {
+
+//        ActivityCompat.requestPermissions(context, permissions, 321);
+    }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -135,7 +166,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 break;
             //设置文件保存路径
             case "setOuputMP4File":
-                //TODO：设置文件保存路径
+
                 String path=methodCall.argument("path");
                 this.setOuputMP4File(new File(path));
                 break;
