@@ -73,8 +73,8 @@
 }
 - (void)initCamera {
     
-    self.pathToMovie = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"BeautyCamMovie.mp4"];
-    self.pathToPic = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"BeautyCamMovie.png"];
+    self.pathToMovie = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamMovie%ld.mp4", (long)[[NSDate date] timeIntervalSince1970]]];
+    self.pathToPic = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamPic%ld.png", (long)[[NSDate date] timeIntervalSince1970]]];
     
     self.gpuImageView = [[GPUImageView alloc] init];
     self.gpuImageView.frame = self.nativeView.frame;
