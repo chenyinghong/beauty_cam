@@ -1,10 +1,27 @@
 # beauty_cam
-
-# flutter美颜相机
-## 目前功能：
-* 开关美颜
-* 拍照
-* 拍视频
-* 设置保存路径
-## 准备新增
-* 滤镜
+### [中文](./CHINESE.md)
+# flutter beauty camera
+# # Current function:
+* Switch Beauty
+* take pictures
+* Make a video
+* Switch lenses
+* Set the save path
+# # Ready to add
+* filter
+# # Usage
+* need to apply in advance and open the required permissions camera and storage.
+```markdown
+Open beauty:
+cameraFlutterPluginDemo? .enableBeauty(true);
+Set the beauty level (0 ~ 1):
+cameraFlutterPluginDemo? .setBeautyLevel(1);
+Take photos:
+cameraFlutterPluginDemo? .takePicture();
+Start shooting video:
+cameraFlutterPluginDemo? .takeVideo();
+End shooting video:
+cameraFlutterPluginDemo? .stopVideo();
+Switch shots:
+cameraFlutterPluginDemo? .switchCamera();
+```
