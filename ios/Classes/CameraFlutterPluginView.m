@@ -63,7 +63,7 @@
     self.nativeView.backgroundColor = [UIColor blackColor];
     
     __block CameraFlutterPluginView *weakSelfView = self;
-    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC));
     dispatch_after(delayTime, dispatch_get_main_queue(), ^{
         [weakSelfView initCamera];
     });
@@ -73,8 +73,8 @@
 }
 - (void)initCamera {
     
-    self.pathToMovie = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"BeautyCamMovie.mp4"];
-    self.pathToPic = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"BeautyCamMovie.png"];
+    self.pathToMovie = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamMovie%ld.mp4", (long)[[NSDate date] timeIntervalSince1970]]];
+    self.pathToPic = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamPic%ld.png", (long)[[NSDate date] timeIntervalSince1970]]];
     
     self.gpuImageView = [[GPUImageView alloc] init];
     self.gpuImageView.frame = self.nativeView.frame;
@@ -131,6 +131,10 @@
 
 // 开启/关闭美颜
 - (void)enableBeauty:(NSString *)isEnableBeauty {
+    
+    if (self.gpuImageView == nil) {
+        return;
+    }
     
     [self.gpuVideoCamera removeAllTargets];
     if(isEnableBeauty.integerValue == 0) { // 开启
