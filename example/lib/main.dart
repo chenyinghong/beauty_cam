@@ -61,9 +61,29 @@ class _MyAppState extends State<MyApp> {
                       // setState(() {
                       //   isEnableBeauty = !isEnableBeauty;
                       // });
-                      cameraFlutterPluginDemo?.takePicture();
+                      cameraFlutterPluginDemo?.takeVideo();
                     },
-                    icon: const Icon(Icons.change_history, color: Colors.white),
+                    icon: const Icon(Icons.not_started_outlined,
+                        color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // cameraFlutterPluginDemo?.updateFilter("isEnableBeauty");
+                      //
+                      // setState(() {
+                      //   isEnableBeauty = !isEnableBeauty;
+                      // });
+                      cameraFlutterPluginDemo?.stopVideo().then((value) {
+                        print(
+                            "================================================");
+                        print("$value");
+                        print(
+                            "================================================");
+                        // final snackBar = SnackBar(content: Text('$value'));
+                        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      });
+                    },
+                    icon: const Icon(Icons.stop, color: Colors.white),
                   ),
                   IconButton(
                     onPressed: () {
