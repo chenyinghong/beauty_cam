@@ -107,6 +107,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                                 Uri.fromFile(file)));
                         String path=file.getAbsoluteFile().toString();
+                        Log.v("BeautyCamera:PATH="+path);
                         result.success(path);
 
                     } catch (Exception e) {
@@ -128,7 +129,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                     context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                             Uri.fromFile(file)));
                     String path=file.getAbsoluteFile().toString();
-//                    Toast.makeText(context, path, Toast.LENGTH_SHORT).show();
+                    Log.v("BeautyCamera:PATH="+path);
                     result.success(path);
                 });
                 break;
