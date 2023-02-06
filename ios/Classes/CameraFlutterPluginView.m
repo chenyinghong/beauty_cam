@@ -109,7 +109,7 @@
     [self  initFilter];
     
     // 默认开启美颜
-    [self enableBeauty:@"0"];
+    [self enableBeauty:@"1"];
     
     __block CameraFlutterPluginView *weakSelfView = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -200,7 +200,7 @@
         return;
     }
     
-    if(isEnableBeauty.integerValue == 0) { // 开启
+    if(isEnableBeauty.integerValue == 1) { // 开启
         self.isOpenBeauty = YES;
     }else { // 关闭
         self.isOpenBeauty = NO;
@@ -321,7 +321,11 @@
     
     if(self.isOpenBeauty) {
         self.filterGroup = [[GPUImageFilterGroup alloc] init];
-
+        
+        [self.bilateralFilter removeAllTargets];
+        [self.brightnessFilter removeAllTargets];
+        [self.sharpenFilter removeAllTargets];
+        
         [self.bilateralFilter addTarget: self.brightnessFilter];
         [self.brightnessFilter addTarget: self.sharpenFilter];
         [self.sharpenFilter addTarget: newTarget];
