@@ -1,7 +1,7 @@
 name: beauty_cam
 description: A new Flutter project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/MR-MaoJiu/beauty_cam
 
 environment:
   sdk: '>=2.18.5 <3.0.0'

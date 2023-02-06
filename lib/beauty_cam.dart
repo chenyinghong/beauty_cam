@@ -14,7 +14,7 @@ class BeautyCam {
   }
 
   ///获取滤镜列表
-  Future<List<String>?> getFilterList() {
+  Future<List<Object?>?> getFilterList() {
     return BeautyCamPlatform.instance.getFilterList();
   }
 

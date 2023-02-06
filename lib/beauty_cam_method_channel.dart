@@ -29,8 +29,8 @@ class MethodChannelBeautyCam extends BeautyCamPlatform {
 
   ///获取滤镜列表
   @override
-  Future<List<String>?> getFilterList() {
-    return methodChannel.invokeMethod<List<String>>('getFilterList');
+  Future<List<Object?>?> getFilterList() {
+    return methodChannel.invokeMethod<List<Object?>>('getFilterList');
   }
 
   ///添加滤镜

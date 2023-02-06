@@ -90,6 +90,22 @@ class _MyAppState extends State<MyApp> {
                       cameraFlutterPluginDemo?.switchCamera();
                     },
                     icon: const Icon(Icons.switch_camera, color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cameraFlutterPluginDemo?.getFilterList().then((value) {
+                        value?.forEach((element) {
+                          print("===========================>$element");
+                        });
+                      });
+                    },
+                    icon: const Icon(Icons.list_alt_sharp, color: Colors.white),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      cameraFlutterPluginDemo?.updateFilter("浪漫");
+                    },
+                    icon: const Icon(Icons.add_a_photo, color: Colors.white),
                   )
                 ],
               )

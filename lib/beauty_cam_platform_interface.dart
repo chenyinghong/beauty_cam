@@ -34,7 +34,7 @@ abstract class BeautyCamPlatform extends PlatformInterface {
   }
 
   ///获取滤镜列表
-  Future<List<String>?> getFilterList() {
+  Future<List<Object?>?> getFilterList() {
     throw UnimplementedError('updateFilter() has not been implemented.');
   }
 
