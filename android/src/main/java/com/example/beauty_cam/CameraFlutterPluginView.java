@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.atech.glcamera.interfaces.FilteredBitmapCallback;
 import com.atech.glcamera.utils.FileUtils;
+import com.atech.glcamera.utils.FilterFactory;
 import com.atech.glcamera.views.GLCameraView;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -27,6 +28,8 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CameraFlutterPluginView extends GLCameraView implements PlatformView, MethodChannel.MethodCallHandler{
@@ -65,16 +68,38 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
             //切换滤镜
             case "updateFilter":
                 //TODO:切换滤镜
-//                this.updateFilter(FilterFactory.FilterType.Amaro);
+                String filter=methodCall.argument("filter");
+                switch (filter){
+                    case "原图":
+                        this.updateFilter(FilterFactory.FilterType.Original);
+                    case "黑白":
+                        this.updateFilter(FilterFactory.FilterType.BlackWhite);
+                    case "怀旧":
+                        this.updateFilter(FilterFactory.FilterType.Antique);
+                    case "寒冷":
+                        this.updateFilter(FilterFactory.FilterType.Cool);
+                    case "温暖":
+                        this.updateFilter(FilterFactory.FilterType.Sunset);
+                    case "浪漫":
+                        this.updateFilter(FilterFactory.FilterType.Warm);
+                }
                 break;
             //添加滤镜
             case "addFilter":
                 //TODO:添加滤镜
+//                String filter=methodCall.argument("filter");
                 break;
             //获取滤镜列表
             case "getFilterList":
                 //TODO:获取滤镜
-
+                List<String> filterList=new ArrayList<String>();
+                filterList.add("原图");
+                filterList.add("黑白");
+                filterList.add("怀旧");
+                filterList.add("寒冷");
+                filterList.add("温暖");
+                filterList.add("浪漫");
+                result.success(filterList);
                 break;
             //开启或关闭美颜
             case "enableBeauty":
@@ -83,7 +108,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
             //美颜程度（0~1）
             case "setBeautyLevel":
                 final float level = Float.parseFloat(Objects.requireNonNull(methodCall.argument("level")).toString());
-                Toast.makeText(context, methodCall.method+"=="+level, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, methodCall.method+"=="+level, Toast.LENGTH_SHORT).show();
                 this.setBeautyLevel(level);
                 break;
             //拍照
