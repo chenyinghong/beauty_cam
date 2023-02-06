@@ -72,16 +72,24 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 switch (filter){
                     case "原图":
                         this.updateFilter(FilterFactory.FilterType.Original);
+                        break;
                     case "黑白":
                         this.updateFilter(FilterFactory.FilterType.BlackWhite);
+                        break;
                     case "怀旧":
                         this.updateFilter(FilterFactory.FilterType.Antique);
+                        break;
                     case "寒冷":
                         this.updateFilter(FilterFactory.FilterType.Cool);
+                        break;
                     case "温暖":
                         this.updateFilter(FilterFactory.FilterType.Sunset);
+                        break;
                     case "浪漫":
                         this.updateFilter(FilterFactory.FilterType.Warm);
+                        break;
+                    default:
+                        this.updateFilter(FilterFactory.FilterType.Original);
                 }
                 break;
             //添加滤镜
