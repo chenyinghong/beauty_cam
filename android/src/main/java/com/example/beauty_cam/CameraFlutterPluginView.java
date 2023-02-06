@@ -91,8 +91,7 @@ public class CameraFlutterPluginView extends GLCameraView implements PlatformVie
                 break;
             //获取滤镜列表
             case "getFilterList":
-                //TODO:获取滤镜
-                List<String> filterList=new ArrayList<String>();
+                ArrayList<String> filterList=new ArrayList<String>();
                 filterList.add("原图");
                 filterList.add("黑白");
                 filterList.add("怀旧");
