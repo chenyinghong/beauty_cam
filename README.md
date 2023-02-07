@@ -7,6 +7,8 @@
 * Make a video
 * Switch lenses
 * Set the save path
+* Get a list of filters
+* Switch filter
 # # Ready to add
 * filter
 # # Usage
@@ -27,5 +29,5 @@ cameraFlutterPluginDemo? .switchCamera();
 Get a list of filters: 
 cameraFlutterPluginDemo?. getFilterList(); 
 Switch filter: 
-cameraFlutterPluginDemo?. updateFilter("romantic");
+cameraFlutterPluginDemo?. updateFilter("浪漫");
 ```
