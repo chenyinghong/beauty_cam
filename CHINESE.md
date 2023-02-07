@@ -7,8 +7,6 @@
 * 拍视频
 * 切换镜头
 * 设置保存路径
-## 准备新增
-* 滤镜
 ## 使用方法
 *  需要提前申请并开启所需权限相机和存储
 ```markdown
@@ -24,4 +22,8 @@ cameraFlutterPluginDemo?.takeVideo();
 cameraFlutterPluginDemo?.stopVideo();
 切换镜头：
 cameraFlutterPluginDemo?.switchCamera();
+获取滤镜列表：
+cameraFlutterPluginDemo?.getFilterList();
+切换滤镜：
+cameraFlutterPluginDemo?.updateFilter("浪漫");
 ```

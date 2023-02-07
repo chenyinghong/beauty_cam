@@ -24,4 +24,8 @@ End shooting video:
 cameraFlutterPluginDemo? .stopVideo();
 Switch shots:
 cameraFlutterPluginDemo? .switchCamera();
+Get a list of filters: 
+cameraFlutterPluginDemo?. getFilterList(); 
+Switch filter: 
+cameraFlutterPluginDemo?. updateFilter("romantic");
 ```
