@@ -20,7 +20,20 @@
 @property (nonatomic, strong) NSString *pathToMovie; // 视频储存路径
 @property (nonatomic, strong) NSString *pathToPic; // 图片储存路径
 
+@property (nonatomic, strong) GPUImageBilateralFilter *bilateralFilter;
+@property (nonatomic, strong) GPUImageSharpenFilter *sharpenFilter;
+@property (nonatomic, strong) GPUImageBrightnessFilter *brightnessFilter;
+@property (nonatomic, strong) GPUImageExposureFilter *exposureFilter;
+@property (nonatomic, strong) GPUImageClosingFilter *closingFilter; // 黑白滤镜
+@property (nonatomic, strong) GPUImageSepiaFilter *sepiaFilter; // 怀旧滤镜
+@property (nonatomic, strong) GPUImageRGBFilter *blueColdRGBFilter; // 颜色滤镜(蓝)寒冷
+@property (nonatomic, strong) GPUImageRGBFilter *yellowWarmRGBFilter; // 颜色滤镜(黄)温暖
+@property (nonatomic, strong) GPUImageRGBFilter *redRomanceRGBFilter; // 颜色滤镜(红)浪漫
 
+// 是否开始美颜
+@property (nonatomic, assign) BOOL isOpenBeauty;
+// 选择的滤镜类型
+@property (nonatomic, copy) NSString *selectFilterType;
 
 @end
  
@@ -73,6 +86,10 @@
 }
 - (void)initCamera {
     
+    self.selectFilterType = 0;
+    self.isOpenBeauty = YES;
+    self.selectFilterType = @"原图";
+
     self.pathToMovie = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamMovie%ld.mp4", (long)[[NSDate date] timeIntervalSince1970]]];
     self.pathToPic = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSString stringWithFormat:@"BeautyCamPic%ld.png", (long)[[NSDate date] timeIntervalSince1970]]];
     
@@ -89,8 +106,10 @@
     self.gpuVideoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
     self.gpuVideoCamera.horizontallyMirrorFrontFacingCamera = YES;
     
+    [self  initFilter];
+    
     // 默认开启美颜
-    [self enableBeauty:@"0"];
+    [self enableBeauty:@"1"];
     
     __block CameraFlutterPluginView *weakSelfView = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -100,6 +119,45 @@
     
 }
 
+// 初始化滤镜
+- (void)initFilter {
+    
+    self.filterGroup = [[GPUImageFilterGroup alloc] init];
+    // 双边模糊
+    self.bilateralFilter = [[GPUImageBilateralFilter alloc] init];
+    self.bilateralFilter.distanceNormalizationFactor = 12.0;
+    // 曝光
+    self.exposureFilter = [[GPUImageExposureFilter alloc] init];
+    self.exposureFilter.exposure = 0; // -1/1 正常0
+    // 美白
+    self.brightnessFilter = [[GPUImageBrightnessFilter alloc] init];
+    self.brightnessFilter.brightness = 0.04;  // -1/1 正常0
+    // 饱和
+//        GPUImageSaturationFilter *saturationFilter = [[GPUImageSaturationFilter alloc] init];
+//        saturationFilter.saturation = 1.0;  // 0/2 正常1
+    // 锐化
+    self.sharpenFilter = [[GPUImageSharpenFilter alloc] init];
+    self.sharpenFilter.sharpness = -0.1; //-4/4 正常0
+    // 黑白
+    self.closingFilter = [[GPUImageClosingFilter alloc] init];
+    // 颜色(寒冷)
+    self.blueColdRGBFilter = [[GPUImageRGBFilter alloc] init];
+    self.blueColdRGBFilter.green = 1.2;     
+    self.blueColdRGBFilter.blue = 2.2;
+    // 颜色(黄)温暖
+    self.yellowWarmRGBFilter = [[GPUImageRGBFilter alloc] init];
+    self.yellowWarmRGBFilter.red = 1.17;
+    self.yellowWarmRGBFilter.green = 1.16;
+    self.yellowWarmRGBFilter.blue = 1;
+    // 颜色(红)浪漫
+    self.redRomanceRGBFilter = [[GPUImageRGBFilter alloc] init];
+    self.redRomanceRGBFilter.red = 1.37;
+    self.redRomanceRGBFilter.green = 1.1;
+    self.redRomanceRGBFilter.blue = 1.2;
+    // 怀旧
+    self.sepiaFilter = [[GPUImageSepiaFilter alloc] init];
+
+}
 #pragma mark - Flutter 交互监听
 -(void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result{
     
@@ -121,6 +179,12 @@
         [self setOuputMP4File:[argumentsDic objectForKey:@"path"]];
     }else if ([[call method] isEqualToString:@"setOuputPicFile"]) { // 设置图片储存路径
         [self setOuputPicFile:[argumentsDic objectForKey:@"path"]];
+    }else if ([[call method] isEqualToString:@"updateFilter"]) { // 切换滤镜
+        [self setFilterType:[argumentsDic objectForKey:@"filter"]];
+    }else if ([[call method] isEqualToString:@"getFilterList"]) { // 获取滤镜列表
+        result([self getFilterList]);
+    }else if ([[call method] isEqualToString:@"setBeautyLevel"]) { // 切换美颜等级
+        [self setBeautyLevel:[NSString stringWithFormat:@"%@", [argumentsDic objectForKey:@"level"]]];
     }
     
 }
@@ -136,40 +200,17 @@
         return;
     }
     
-    [self.gpuVideoCamera removeAllTargets];
-    if(isEnableBeauty.integerValue == 0) { // 开启
-        self.filterGroup = [[GPUImageFilterGroup alloc] init];
-        // 双边模糊
-        GPUImageBilateralFilter *bilateralFilter = [[GPUImageBilateralFilter alloc] init];
-        bilateralFilter.distanceNormalizationFactor = 12.0;
-        // 曝光
-        GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
-        exposureFilter.exposure = 0; // -1/1 正常0
-        // 美白
-        GPUImageBrightnessFilter *brightnessFilter = [[GPUImageBrightnessFilter alloc] init];
-        brightnessFilter.brightness = 0.05;  // -1/1 正常0
-        // 饱和
-        GPUImageSaturationFilter *saturationFilter = [[GPUImageSaturationFilter alloc] init];
-        saturationFilter.saturation = 1.0;  // 0/2 正常1
-        // 黑白色调模糊
-//        GPUImageOpeningFilter *openingFilter = [[GPUImageOpeningFilter alloc] init];
-        
-        [bilateralFilter addTarget: exposureFilter];
-        [exposureFilter addTarget: brightnessFilter];
-        [brightnessFilter addTarget: saturationFilter];
-        
-        [self.filterGroup setInitialFilters:[NSArray arrayWithObject:bilateralFilter]];
-        [self.filterGroup setTerminalFilter:saturationFilter];
-        
-        [self.gpuVideoCamera addTarget:self.filterGroup];
-        [self.filterGroup addTarget:self.gpuImageView];
-        _imagefilter = self.filterGroup;
+    if(isEnableBeauty.integerValue == 1) { // 开启
+        self.isOpenBeauty = YES;
     }else { // 关闭
-        GPUImageExposureFilter *exposureFilter = [[GPUImageExposureFilter alloc] init];
-        [self.gpuVideoCamera addTarget:exposureFilter];
-        [exposureFilter addTarget:self.gpuImageView];
-        _imagefilter = exposureFilter;
+        self.isOpenBeauty = NO;
     }
+    
+    [self.gpuVideoCamera removeAllTargets];
+    GPUImageFilter *gpuImageFiler = [self getFilterWithType:self.selectFilterType];
+    [self.gpuVideoCamera addTarget:[self addSelectFilter:gpuImageFiler]];
+    [gpuImageFiler addTarget:self.gpuImageView];
+    _imagefilter = gpuImageFiler;
 }
 
 // 切换摄像头
@@ -225,16 +266,103 @@
     }];
     
 }
+// 修改美颜等级
+- (void)setBeautyLevel:(NSString *)level {
+    float levelFloat = level.floatValue;
+        
+    // 磨皮最大值
+    float maxBilateral = 5;
+    // 磨皮最小值
+    float minBilateral = 20;
+
+    if(levelFloat >= 1) {
+        self.bilateralFilter.distanceNormalizationFactor = maxBilateral;
+    }else if(levelFloat <= 0) {
+        self.bilateralFilter.distanceNormalizationFactor = minBilateral;
+    }else {
+        self.bilateralFilter.distanceNormalizationFactor = minBilateral - ((minBilateral - maxBilateral)*levelFloat);
+    }
+//    NSLog(@" ------- %f", self.bilateralFilter.distanceNormalizationFactor);
+}
+
+// 切换滤镜
+- (void)setFilterType:(NSString *)typeStr {
+    if (self.gpuImageView == nil) {
+        return;
+    }
+    
+    self.selectFilterType = typeStr;
+    [self.gpuVideoCamera removeAllTargets];
+    GPUImageFilter *gpuImageFiler = [self getFilterWithType:typeStr];
+    [self.gpuVideoCamera addTarget:[self addSelectFilter:gpuImageFiler]];
+    [gpuImageFiler addTarget:self.gpuImageView];
+    _imagefilter = gpuImageFiler;
+    
+}
+
+// 获取滤镜列表
+- (NSArray *)getFilterList {
+    return [NSArray arrayWithObjects:@"原图", @"黑白", @"怀旧", @"寒冷", @"温暖", @"浪漫",nil];
+}
 
 // 设置视频储存路径
 - (void)setOuputMP4File:(NSString *)path {
     self.pathToMovie = path;
 }
+
 // 设置图片储存路径
 - (void)setOuputPicFile:(NSString *)path {
     self.pathToPic = path;
 }
+#pragma mark -
 
+// 添加选择的滤镜
+- (id<GPUImageInput>)addSelectFilter:(id<GPUImageInput>)newTarget {
+    
+    if(self.isOpenBeauty) {
+        self.filterGroup = [[GPUImageFilterGroup alloc] init];
+        
+        [self.bilateralFilter removeAllTargets];
+        [self.brightnessFilter removeAllTargets];
+        [self.sharpenFilter removeAllTargets];
+        
+        [self.bilateralFilter addTarget: self.brightnessFilter];
+        [self.brightnessFilter addTarget: self.sharpenFilter];
+        [self.sharpenFilter addTarget: newTarget];
+
+        [self.filterGroup setInitialFilters:[NSArray arrayWithObject:self.bilateralFilter]];
+        [self.filterGroup setTerminalFilter:newTarget];
+        
+        return self.filterGroup;
+    }else {
+        
+        return newTarget;
+    }
+    
+}
+
+// 根据类型返回滤镜
+- (id<GPUImageInput>)getFilterWithType:(NSString *)type {
+    if([type isEqualToString:@"黑白"]) { // 黑白
+        return self.closingFilter;
+    }else if([type isEqualToString:@"寒冷"]) {
+        // 颜色(冷)
+        return self.blueColdRGBFilter;
+    }else if([type isEqualToString:@"温暖"]) {
+        // 颜色(暖)日落
+        return self.yellowWarmRGBFilter;;
+    }else if([type isEqualToString:@"浪漫"]) {
+        // 颜色(红)温暖
+        return _redRomanceRGBFilter;
+    }else if([type isEqualToString:@"怀旧"]) {
+        // 怀旧
+        return self.sepiaFilter;
+    }else { // 原图
+        return self.exposureFilter;
+    }
+}
+
+// 保存视频
 - (void)saveVideo {
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:self.pathToMovie];
     if (!exists) {
